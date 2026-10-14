@@ -3,6 +3,7 @@ package com.mycompany.cloudgaming;
 import java.util.Scanner;
 
 public class CloudGaming {
+
     private static final int MAKS_DATA = 100;
     private static final Member[] daftarMember = new Member[MAKS_DATA];
     private static int jumlahMember = 0;
@@ -20,8 +21,8 @@ public class CloudGaming {
         tambahKeArray(new MemberGratis("Reval", "reval@gmail.com"));
         tambahKeArray(new MemberPremium("Dava", "dava@gmail.com", "4K"));
         tambahKeArray(new MemberGratis("Aldi", "aldi@gmail.com"));
-        tambahKeArray(new MemberVIP("juan", "juan@gmail.com"));
-        tambahKeArray(new MemberVIP("ando", "ando@gmail.com"));
+        tambahKeArray(new MemberVIP("Rizky", "rizky@gmail.com"));
+        tambahKeArray(new MemberVIP("Salsa", "salsa@gmail.com"));
     }
 
     private static void jalankanMenu() {
@@ -43,12 +44,15 @@ public class CloudGaming {
                     menuLayananStreaming();
                     break;
                 case 5:
+                    menuFiturPaket();
+                    break;
+                case 6:
                     System.out.println("\nProgram selesai. Terima kasih.");
                     break;
                 default:
                     System.out.println("Pilihan menu tidak tersedia.");
             }
-        } while (pilihan != 5);
+        } while (pilihan != 6);
     }
 
     private static void tampilkanMenu() {
@@ -57,9 +61,10 @@ public class CloudGaming {
         System.out.println("============================================");
         System.out.println("1. Tambah Data Baru");
         System.out.println("2. Tampilkan Seluruh Data");
-        System.out.println("3. Pencarian member");
+        System.out.println("3. Pencarian");
         System.out.println("4. Layanan Streaming Game");
-        System.out.println("5. Keluar");
+        System.out.println("5. Fitur Paket Member");
+        System.out.println("6. Keluar");
         System.out.println("============================================");
     }
 
@@ -68,13 +73,17 @@ public class CloudGaming {
             System.out.println("Penyimpanan data sudah penuh.");
             return;
         }
+
         System.out.println("\n------------- TAMBAH MEMBER ---------------");
         String username = bacaString("Username: ");
+
         while (username.isEmpty()) {
             System.out.println("Username tidak boleh kosong.");
             username = bacaString("Username: ");
         }
+
         String email = bacaString("Email: ");
+
         while (!email.contains("@")) {
             System.out.println("Email harus mengandung '@'.");
             email = bacaString("Email: ");
@@ -87,25 +96,28 @@ public class CloudGaming {
         int tipe = bacaInteger("Pilihan: ");
 
         try {
-            Member baru; 
+            Member baru;
+
             switch (tipe) {
                 case 1:
-                    baru = new MemberGratis(username, email);    
+                    baru = new MemberGratis(username, email);
                     break;
                 case 2:
-                    baru = new MemberPremium(username, email, pilihResolusiPremium()); 
+                    baru = new MemberPremium(username, email, pilihResolusiPremium());
                     break;
                 case 3:
-                    baru = new MemberVIP(username, email);       
+                    baru = new MemberVIP(username, email);
                     break;
                 default:
                     System.out.println("Tipe member tidak tersedia.");
                     return;
             }
+
             tambahKeArray(baru);
             System.out.println("Member " + baru.getTipe() + " berhasil ditambahkan.");
-            System.out.println(baru.getKeteranganKuota());   
+            System.out.println(baru.getKeteranganKuota());
             System.out.println("Resolusi: " + baru.getResolusi());
+
         } catch (IllegalArgumentException e) {
             System.out.println("Gagal menambahkan: " + e.getMessage());
         }
@@ -113,29 +125,37 @@ public class CloudGaming {
 
     private static String pilihResolusiPremium() {
         String[] pilihan = MemberPremium.getPilihanResolusi();
+
         System.out.println("\nPilih resolusi Premium:");
+
         for (int i = 0; i < pilihan.length; i++) {
             System.out.println((i + 1) + ". " + pilihan[i]);
         }
+
         int nomor = bacaInteger("Pilihan resolusi: ");
+
         while (nomor < 1 || nomor > pilihan.length) {
             System.out.println("Pilihan resolusi tidak tersedia.");
             nomor = bacaInteger("Pilihan resolusi: ");
         }
+
         return pilihan[nomor - 1];
     }
 
     private static void tampilkanSemuaData() {
         System.out.println("\n============= SELURUH DATA MEMBER =============");
+
         if (jumlahMember == 0) {
             System.out.println("Belum ada data member.");
             return;
         }
+
         int gratis = 0, premium = 0, vip = 0;
+
         for (int i = 0; i < jumlahMember; i++) {
-            
             daftarMember[i].tampilkanInfo();
             System.out.println("------------------------------------------------");
+
             switch (daftarMember[i].getTipe()) {
                 case "Gratis":
                     gratis++;
@@ -147,9 +167,11 @@ public class CloudGaming {
                     vip++;
             }
         }
+
         System.out.println("Jumlah data pada array : " + jumlahMember);
         System.out.println("Total member terdaftar : " + Member.getTotalMemberTerdaftar());
-        System.out.printf("Komposisi              : Gratis=%d | Premium=%d | VIP=%d%n", gratis, premium, vip);
+        System.out.printf("Komposisi              : Gratis=%d | Premium=%d | VIP=%d%n",
+                gratis, premium, vip);
     }
 
     private static void aksiMember() {
@@ -158,7 +180,9 @@ public class CloudGaming {
         System.out.println("2. Cari berdasarkan Username");
         System.out.println("3. Tambah waktu bermain");
         System.out.println("4. Ubah resolusi Premium");
+
         int aksi = bacaInteger("Pilih aksi: ");
+
         switch (aksi) {
             case 1:
                 tampilkanHasilPencarian(cariMember(bacaInteger("Masukkan ID: ")));
@@ -206,11 +230,14 @@ public class CloudGaming {
 
     private static void tambahWaktuMember() {
         Member member = cariMember(bacaInteger("Masukkan ID member: "));
+
         if (member == null) {
             System.out.println("Member tidak ditemukan.");
             return;
         }
+
         int menit = bacaInteger("Tambahkan waktu bermain (menit): ");
+
         if (menit <= 0) {
             System.out.println("Waktu harus lebih dari 0 menit.");
             return;
@@ -221,21 +248,26 @@ public class CloudGaming {
         } else {
             System.out.println("Gagal menambahkan waktu.");
         }
+
         System.out.println(member.getKeteranganKuota());
     }
 
     private static void ubahResolusiPremium() {
         Member member = cariMember(bacaInteger("Masukkan ID member Premium: "));
+
         if (member instanceof MemberPremium) {
-            MemberPremium premium = (MemberPremium) member; 
+            MemberPremium premium = (MemberPremium) member;
             premium.setResolusi(pilihResolusiPremium());
             System.out.println("Resolusi berhasil diubah menjadi " + premium.getResolusi());
+
         } else if (member instanceof MemberGratis) {
             System.out.println("Member Gratis tidak dapat mengubah resolusi.");
             System.out.println("Resolusi Member Gratis tetap 720p.");
+
         } else if (member instanceof MemberVIP) {
             System.out.println("Member VIP tidak dapat mengubah resolusi.");
             System.out.println("Resolusi Member VIP tetap " + member.getResolusi() + ".");
+
         } else {
             System.out.println("Member tidak ditemukan.");
         }
@@ -243,42 +275,49 @@ public class CloudGaming {
 
     private static void menuLayananStreaming() {
         System.out.println("\n========== LAYANAN STREAMING GAME ==========");
-        System.out.println("1. sesi bermain satu member");
-        System.out.println("2. sesi bermain seluruh member");
-        System.out.println("3. Tagihan langganan bulanan seluruh member");
+        System.out.println("1. Mulai sesi bermain (satu member)");
+        System.out.println("2. Mulai sesi bermain (seluruh member)");
+        System.out.println("3. Tagihan langganan bulanan (seluruh member)");
+
         int pilihan = bacaInteger("Pilih layanan: ");
+
         switch (pilihan) {
             case 1:
                 Member member = cariMember(bacaInteger("Masukkan ID member: "));
+
                 if (member == null) {
                     System.out.println("Member tidak ditemukan.");
                     break;
                 }
+
                 String game = bacaString("Nama game: ");
                 int menit = bacaInteger("Durasi bermain (menit): ");
-                mulaiStreaming(member, game, menit);  
+                mulaiStreaming(member, game, menit);
                 break;
+
             case 2:
                 streamingSemuaMember();
                 break;
+
             case 3:
                 tampilkanTagihan();
                 break;
+
             default:
                 System.out.println("Pilihan layanan tidak tersedia.");
         }
     }
 
-    
     private static void mulaiStreaming(Member member, String namaGame, int menit) {
-        System.out.println("\n>> Member      : " + member.getUsername() + " (ID " + member.getIdMember() + ")");
+        System.out.println("\n>> Member      : " + member.getUsername()
+                + " (ID " + member.getIdMember() + ")");
         System.out.println("   Tipe referensi (compile-time) : Member");
-        System.out.println("   Wujud asli objek (runtime)    : " + member.getClass().getSimpleName());
-        
+        System.out.println("   Wujud asli objek (runtime)    : "
+                + member.getClass().getSimpleName());
+
         member.mulaiSesi(namaGame, menit);
     }
 
-    
     private static void mulaiStreaming(Member member, String namaGame) {
         mulaiStreaming(member, namaGame, 10);
     }
@@ -288,13 +327,16 @@ public class CloudGaming {
             System.out.println("Belum ada data member.");
             return;
         }
+
         String game = bacaString("Nama game yang dimainkan semua member: ");
         int menit = bacaInteger("Durasi bermain tiap member (menit): ");
+
         System.out.println("\n====== SESI BERMAIN SELURUH MEMBER ======");
+
         for (int i = 0; i < jumlahMember; i++) {
-            
             mulaiStreaming(daftarMember[i], game, menit);
         }
+
         System.out.println("\nCatatan: hasil tiap member berbeda karena dynamic binding.");
     }
 
@@ -303,36 +345,180 @@ public class CloudGaming {
             System.out.println("Belum ada data member.");
             return;
         }
+
         int bulan = bacaInteger("Jumlah bulan langganan: ");
+
         if (bulan <= 0) {
             System.out.println("Jumlah bulan harus lebih dari 0.");
             return;
         }
+
         System.out.println("\n================ TAGIHAN LANGGANAN ================");
         System.out.printf("%-4s %-10s %-8s %-8s %12s %14s%n",
                 "ID", "Username", "Tipe", "Resolusi", "Per Bulan", "Total " + bulan + " bln");
         System.out.println("---------------------------------------------------");
+
         int totalSemua = 0;
+
         for (int i = 0; i < jumlahMember; i++) {
             Member m = daftarMember[i];
-            
             int total = m.hitungBiaya(bulan);
             totalSemua += total;
+
             System.out.printf("%-4d %-10s %-8s %-8s %,12d %,14d%n",
                     m.getIdMember(), m.getUsername(), m.getTipe(), m.getResolusi(),
                     m.hitungBiaya(), total);
         }
+
         System.out.println("---------------------------------------------------");
         System.out.printf("Total pendapatan %d bulan: Rp %,d%n", bulan, totalSemua);
-        
+
         Member contoh = daftarMember[jumlahMember - 1];
+
         System.out.printf("Contoh diskon 10%% untuk %s (%d bulan): Rp %,d%n",
                 contoh.getUsername(), bulan, contoh.hitungBiaya(bulan, 10.0));
     }
 
+    private static void menuFiturPaket() {
+        System.out.println("\n=========== FITUR PAKET MEMBER ===========");
+        System.out.println("1. Lihat fitur paket (satu member)");
+        System.out.println("2. Lihat fitur paket (seluruh member)");
+        System.out.println("3. Simpan progres ke cloud");
+        System.out.println("4. Mode live streaming");
+        System.out.println("5. Lihat riwayat progres");
+        System.out.println("6. Jalankan semua fitur (seluruh member)");
+
+        int pilihan = bacaInteger("Pilih fitur: ");
+
+        switch (pilihan) {
+            case 1:
+                Member member = cariMember(bacaInteger("Masukkan ID member: "));
+
+                if (member == null) {
+                    System.out.println("Member tidak ditemukan.");
+                    break;
+                }
+
+                prosesFiturPaket(member);
+                break;
+
+            case 2:
+                for (int i = 0; i < jumlahMember; i++) {
+                    prosesFiturPaket(daftarMember[i]);
+                }
+                break;
+
+            case 3:
+                Member penyimpan = cariMember(bacaInteger("Masukkan ID member: "));
+
+                if (penyimpan == null) {
+                    System.out.println("Member tidak ditemukan.");
+                    break;
+                }
+
+                prosesSimpanProgres(penyimpan, bacaString("Nama game: "));
+                break;
+
+            case 4:
+                Member penyiar = cariMember(bacaInteger("Masukkan ID member: "));
+
+                if (penyiar == null) {
+                    System.out.println("Member tidak ditemukan.");
+                    break;
+                }
+
+                prosesLiveStreaming(penyiar, bacaString("Nama game: "));
+                break;
+
+            case 5:
+                Member pencari = cariMember(bacaInteger("Masukkan ID member: "));
+
+                if (pencari == null) {
+                    System.out.println("Member tidak ditemukan.");
+                    break;
+                }
+
+                prosesRiwayatProgres(pencari);
+                break;
+
+            case 6:
+                jalankanSemuaFitur();
+                break;
+
+            default:
+                System.out.println("Pilihan fitur tidak tersedia.");
+        }
+    }
+
+    private static void prosesFiturPaket(Member member) {
+        System.out.println("\n>> " + member.getUsername()
+                + " (ID " + member.getIdMember() + ", " + member.getTipe() + ")");
+        member.tampilkanFiturPaket();
+    }
+
+    private static void prosesSimpanProgres(Member member, String namaGame) {
+        System.out.println("\n>> " + member.getUsername()
+                + " (ID " + member.getIdMember() + ", " + member.getTipe() + ")");
+
+        if (member instanceof RiwayatProgres) {
+            RiwayatProgres penyimpan = (RiwayatProgres) member;
+            penyimpan.simpanProgresCloud(namaGame);
+        } else {
+            System.out.println("   Member " + member.getTipe()
+                    + " tidak dapat menyimpan progres ke cloud (belum implements RiwayatProgres).");
+        }
+    }
+
+    private static void prosesLiveStreaming(Member member, String namaGame) {
+        System.out.println("\n>> " + member.getUsername()
+                + " (ID " + member.getIdMember() + ", " + member.getTipe() + ")");
+
+        if (member instanceof ModeLiveStreaming) {
+            ModeLiveStreaming penyiar = (ModeLiveStreaming) member;
+            penyiar.mulaiLiveStreaming(namaGame);
+        } else {
+            System.out.println("   Member " + member.getTipe()
+                    + " tidak dapat melakukan live streaming (belum implements ModeLiveStreaming).");
+        }
+    }
+
+    private static void prosesRiwayatProgres(Member member) {
+        System.out.println("\n>> " + member.getUsername()
+                + " (ID " + member.getIdMember() + ", " + member.getTipe() + ")");
+
+        if (member instanceof RiwayatProgres) {
+            RiwayatProgres penyimpan = (RiwayatProgres) member;
+            penyimpan.tampilkanRiwayatProgres();
+        } else {
+            System.out.println("   Member " + member.getTipe()
+                    + " tidak memiliki riwayat progres (belum implements RiwayatProgres).");
+        }
+    }
+
+    private static void jalankanSemuaFitur() {
+        if (jumlahMember == 0) {
+            System.out.println("Belum ada data member.");
+            return;
+        }
+
+        String game = bacaString("Nama game: ");
+
+        System.out.println("\n====== FITUR PAKET SELURUH MEMBER ======");
+
+        for (int i = 0; i < jumlahMember; i++) {
+            prosesFiturPaket(daftarMember[i]);
+            prosesSimpanProgres(daftarMember[i], game);
+            prosesRiwayatProgres(daftarMember[i]);
+            prosesLiveStreaming(daftarMember[i], game);
+        }
+
+        System.out.println("\nCatatan: abstract method dijalankan semua subclass, sedangkan method interface");
+        System.out.println("hanya dijalankan oleh member yang lolos pengecekan instanceof.");
+    }
+
     private static void tambahKeArray(Member member) {
         if (jumlahMember < MAKS_DATA) {
-            daftarMember[jumlahMember] = member; 
+            daftarMember[jumlahMember] = member;
             jumlahMember++;
         }
     }

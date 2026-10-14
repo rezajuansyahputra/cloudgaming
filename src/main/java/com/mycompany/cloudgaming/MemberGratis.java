@@ -14,6 +14,12 @@ public class MemberGratis extends Member {
     }
 
     @Override
+    public void tampilkanFiturPaket() {
+        System.out.println("   [Gratis] Fitur paket: streaming 720p, batas " + BATAS_WAKTU_HARIAN
+                + " menit/hari, ada iklan, antre server biasa, progres tidak disimpan ke cloud, tanpa live streaming.");
+    }
+
+    @Override
     public String getTipe() {
         return "Gratis";
     }

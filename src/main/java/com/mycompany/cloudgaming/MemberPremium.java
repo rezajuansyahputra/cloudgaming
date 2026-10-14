@@ -1,10 +1,15 @@
 package com.mycompany.cloudgaming;
 
-public class MemberPremium extends Member {
+import java.util.ArrayList;
+
+public class MemberPremium extends Member implements RiwayatProgres, ModeLiveStreaming {
 
     private static final String[] PILIHAN_RESOLUSI = {"720p", "1080p", "1440p", "4K"};
 
+    private static final int MAKS_RIWAYAT = 5;
+
     private String resolusi;
+    private final ArrayList<String> riwayatProgres = new ArrayList<>();
 
     public MemberPremium(String username, String email, String resolusi) {
         super(username, email);
@@ -41,11 +46,44 @@ public class MemberPremium extends Member {
     }
 
     @Override
+    public void tampilkanFiturPaket() {
+        System.out.println("   [Premium] Fitur paket: streaming " + resolusi
+                + ", tanpa batas waktu, tanpa iklan, simpan progres ke cloud, live streaming.");
+    }
+
+    @Override
+    public void simpanProgresCloud(String namaGame) {
+        System.out.println("   [Premium] " + getUsername() + " menyimpan progres '" + namaGame
+                + "' ke cloud (dapat dilanjutkan dari perangkat mana pun).");
+        if (riwayatProgres.size() == MAKS_RIWAYAT) {
+            System.out.println("   [Premium] Riwayat penuh (" + MAKS_RIWAYAT + "), catatan terlama dihapus: " + riwayatProgres.remove(0));
+        }
+        riwayatProgres.add(namaGame + " (waktu main hari ini: " + getDurasiBermainHariIni() + " menit)");
+    }
+
+    @Override
+    public void tampilkanRiwayatProgres() {
+        System.out.println("   [Premium] Riwayat progres cloud " + getUsername() + " (maks " + MAKS_RIWAYAT + " terakhir):");
+        if (riwayatProgres.isEmpty()) {
+            System.out.println("   (belum ada progres tersimpan)");
+        }
+        for (int i = 0; i < riwayatProgres.size(); i++) {
+            System.out.println("   " + (i + 1) + ". " + riwayatProgres.get(i));
+        }
+    }
+
+    @Override
+    public void mulaiLiveStreaming(String namaGame) {
+        System.out.println("   [Premium] " + getUsername() + " memulai live streaming '" + namaGame
+                + "' ke platform siaran (kualitas " + resolusi + ").");
+    }
+
+    @Override
     public String getTipe() {
         return "Premium";
     }
 
-   
+    
     @Override
     public boolean tambahWaktuBermain(int menit) {
         super.tambahDurasiBermain(menit);
@@ -73,13 +111,13 @@ public class MemberPremium extends Member {
 
     @Override
     public void mulaiSesi(String namaGame) {
-        System.out.printf("[Premium] %s langsung terhubung ke server (tanpa iklan).%n", getUsername());
-        System.out.printf("[Premium] Game '%s' berjalan di %s tanpa batas waktu.%n", namaGame, resolusi);
+        System.out.printf("   [Premium] %s langsung terhubung ke server (tanpa iklan).%n", getUsername());
+        System.out.printf("   [Premium] Game '%s' berjalan di %s tanpa batas waktu.%n", namaGame, resolusi);
     }
 
     @Override
     public void tampilkanInfo() {
         super.tampilkanInfo();
-        System.out.printf("Tipe: Premium | Batas waktu: Tidak terbatas | Resolusi: %s%n", resolusi);
+        System.out.printf("         Tipe: Premium | Batas waktu: Tidak terbatas | Resolusi: %s%n", resolusi);
     }
 }
